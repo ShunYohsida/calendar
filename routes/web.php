@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('sample.index');
