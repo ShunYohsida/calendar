@@ -15,4 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('sample.index');
+Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
+Route::get('/calendar/schedule', [App\Http\Controllers\CalendarController::class, 'schedule'])->name('calendar.schedule');
+Route::post('/calendar/schedule', [App\Http\Controllers\CalendarController::class, 'scheduleAdd'])->name('calendar.schedule.add');

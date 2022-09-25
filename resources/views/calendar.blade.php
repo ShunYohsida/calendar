@@ -15,9 +15,41 @@
         th:nth-of-type(1), td:nth-of-type(1) {
             color: red;
         }
+        .schedule_add {
+            color: #FFFFFF;
+            display: inline-block;
+            padding: 1rem;;
+            background-color: #ff8a84;
+            margin: 0.3rem;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            text-decoration-line: none;
+
+        }
+        .schedule_add:hover {
+            color: #FFFFFF;
+            background-color: #ff5e56 !important;
+        }
+        .flex{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
     </style>
     <div class="container">
-        <h1>カレンダー</h1>
+        <div class="flex">
+            <h1>カレンダー</h1>
+            <div>
+                <a href="calendar/schedule" class="schedule_add">スケジュール登録</a>
+            </div>
+        </div>
+
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
+
         <table class="table table-bordered">
             <tr>
                 <th>日</th>
@@ -28,10 +60,16 @@
                 <th>金</th>
                 <th>土</th>
             </tr>
-            @foreach ($calendarWeek as $week)
+            @foreach ($calendarWeek as $weekKey => $week)
             <tr>
                 @foreach ($week as $day)
-                    <td>{{ $day }}</td>
+                    <td>{{ $day }}<br>
+                        @if ($day)
+                            @foreach (data_get($eventWeek, $weekKey.'.'.$day) as $event)
+                                {{ $event->name }}<br>
+                            @endforeach
+                        @endif
+                    </td>
                 @endforeach
             <tr>
             @endforeach

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Event;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,11 +20,14 @@ class CalendarController extends Controller
 
         $calendarWeek = array();
         $theWhatWeeks = 0;
+        $events = Event::where('date', '>=', Carbon::create($year, $month, 1))->Where('date', '<=', Carbon::create($year, $month, $lastDay))->get();
+
         // note: 月末日までループ
         for ($i = 1; $i < $lastDay + 1; $i++) {
             // note : 曜日を取得
             $date = Carbon::create($year, $month, $i);
             $week = $date->format('w');
+            $eventWeek[$theWhatWeeks][$i] = $events->where('date', '=', Carbon::create($year, $month, $i))->all();
 
             // note : 1日の場合
             if ($i == 1) {
@@ -49,6 +53,26 @@ class CalendarController extends Controller
             }
         }
 
-        return view('calendar')->with('calendarWeek', $calendarWeek);
+        return view('calendar')->with(['calendarWeek' => $calendarWeek,'eventWeek' => $eventWeek ]);
+    }
+
+    public function schedule(Request $request)
+    {
+        return view('calendar.schedule');
+    }
+    public function scheduleAdd(Request $request)
+    {
+        $validated = $request->validate([
+            'event_date' => 'required|date',
+            'event_name' => 'required|max:100',
+        ]);
+
+        Event::create([
+            'name' => $request->event_name,
+            'date' => $request->event_date,
+        ]);
+
+        $request->session()->flash('status', '登録処理が完了しました。');
+        return redirect(route('calendar.index'));
     }
 }
